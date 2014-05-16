@@ -13,20 +13,25 @@ namespace MongoDbIdentity
     public class MongoDbCtx
     {
         static ServerAndDb _serverAndDb;
-        static MongoClient Client ;
-        public  MongoDatabase Database  = Client.GetServer().GetDatabase(_serverAndDb.Database); 
-        public  MongoCollection<ApplicationUser> Users { get { return Database.GetCollection<ApplicationUser>("users"); } }
+        static MongoClient Client;
+        MongoDatabase Database;
+        public MongoCollection<ApplicationUser> Users { get { return Database.GetCollection<ApplicationUser>("users"); } }
 
-        public  IdentityContext IdentityContext { get{return new IdentityContext(Users);}}
+        public IdentityContext IdentityContext { get { return new IdentityContext(Users); } }
 
-         static MongoDbCtx()
+        static MongoDbCtx()
         {
-             _serverAndDb = new ServerAndDb(GetConnectionString());
-             Client  = new MongoClient(_serverAndDb.Server);
-             
+            _serverAndDb = new ServerAndDb(GetConnectionString());
+            Client = new MongoClient(_serverAndDb.Server);
         }
 
-      #region Utils
+
+        public MongoDbCtx()
+        {
+            Database = Client.GetServer().GetDatabase(_serverAndDb.Database);
+        }
+
+        #region Utils
         private static string GetConnectionString()
         {
 
